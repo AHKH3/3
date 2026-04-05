@@ -1,0 +1,51 @@
+{
+  "name": "pdf-studio",
+  "productName": "PDF Studio",
+  "version": "1.0.0",
+  "description": "أدوات PDF عربية — تطبيق سطح مكتب",
+  "main": "electron/main.cjs",
+  "private": true,
+  "scripts": {
+    "postinstall": "node scripts/copy-vendor.cjs",
+    "vendor": "node scripts/copy-vendor.cjs",
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "dist:linux": "electron-builder --linux",
+    "dist:win": "electron-builder --win"
+  },
+  "dependencies": {
+    "pdf-lib": "1.17.1",
+    "pdfjs-dist": "3.11.174",
+    "sortablejs": "1.15.7"
+  },
+  "devDependencies": {
+    "electron": "^34.2.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "app.pdfstudio.desktop",
+    "files": [
+      "electron/**/*",
+      "index.html",
+      "assets/**/*",
+      "concept-*.html",
+      "showcase.html"
+    ],
+    "directories": {
+      "output": "release"
+    },
+    "win": {
+      "target": ["nsis", "portable"]
+    },
+    "linux": {
+      "target": ["AppImage", "deb"],
+      "category": "Office",
+      "maintainer": "pdf-studio"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  }
+}
