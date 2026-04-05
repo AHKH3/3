@@ -81,7 +81,8 @@ async function createWindow() {
   const port = await ensureServerPort();
   const startUrl = `http://127.0.0.1:${port}/index.html`;
 
-  mainWindow = new BrowserWindow({
+  const iconPath = path.join(ROOT, "assets", "branding", "app-icon-1024.png");
+  const winOpts = {
     width: 1240,
     height: 820,
     minWidth: 900,
@@ -93,7 +94,10 @@ async function createWindow() {
       nodeIntegration: false,
       sandbox: true
     }
-  });
+  };
+  if (fs.existsSync(iconPath)) winOpts.icon = iconPath;
+
+  mainWindow = new BrowserWindow(winOpts);
 
   mainWindow.once("ready-to-show", () => mainWindow.show());
 
