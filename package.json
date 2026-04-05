@@ -14,6 +14,7 @@
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
     "dist:linux": "electron-builder --linux",
+    "dist:linux-deb": "electron-builder --linux deb",
     "dist:win": "electron-builder --win"
   },
   "dependencies": {
@@ -42,9 +43,9 @@
       "target": ["nsis", "portable"]
     },
     "linux": {
-      "target": ["AppImage", "deb"],
+      "target": ["AppImage"],
       "category": "Office",
-      "maintainer": "pdf-studio"
+      "maintainer": "abdo3342"
     },
     "nsis": {
       "oneClick": false,
