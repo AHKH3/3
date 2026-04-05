@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="PDF Studio — أدوات عربية لدمج الصور وPDF، التحرير، العلامة المائية، وترقيم الصفحات في المتصفح." />
+  <title>PDF Studio | الذكاء والفن</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%236366f1'/%3E%3Cpath d='M18 18h21l7 7v21H18z' fill='%23ffffff'/%3E%3Cpath d='M39 18v8h8' fill='none' stroke='%236366f1' stroke-width='4'/%3E%3Cpath d='M24 39h16M24 31h12' stroke='%236366f1' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E" />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/app.css" />
+</head>
+
+<body>
+  <a class="skip-link" href="#app-main">تخطي إلى المحتوى</a>
+
+  <div class="aurora-container" aria-hidden="true">
+    <div class="aurora-blob"></div>
+    <div class="aurora-blob"></div>
+    <div class="aurora-blob"></div>
+  </div>
+  <div class="glass-noise" aria-hidden="true"></div>
+
+  <svg style="display:none" aria-hidden="true">
+    <symbol id="icon-images" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" /></symbol>
+    <symbol id="icon-merge" viewBox="0 0 24 24"><path d="M12 4v16M8 16l4 4 4-4" /><path d="M4 12v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2" /></symbol>
+    <symbol id="icon-edit" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" /></symbol>
+    <symbol id="icon-watermark" viewBox="0 0 24 24"><polyline points="4 7 4 4 20 4 20 7" /><line x1="9" y1="20" x2="15" y2="20" /><line x1="12" y1="4" x2="12" y2="20" /></symbol>
+    <symbol id="icon-numbers" viewBox="0 0 24 24"><line x1="4" y1="9" x2="20" y2="9" /><line x1="4" y1="15" x2="20" y2="15" /><line x1="10" y1="3" x2="8" y2="21" /><line x1="16" y1="3" x2="14" y2="21" /></symbol>
+    <symbol id="icon-app" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></symbol>
+    <symbol id="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" /></symbol>
+    <symbol id="icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></symbol>
+    <symbol id="icon-arrow-right" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></symbol>
+    <symbol id="icon-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" /></symbol>
+    <symbol id="icon-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></symbol>
+    <symbol id="icon-trash" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></symbol>
+    <symbol id="icon-grip" viewBox="0 0 24 24"><circle cx="9" cy="5" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="5" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="15" cy="19" r="1.5"/></symbol>
+    <symbol id="icon-rotate" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10" /><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" /></symbol>
+    <symbol id="icon-file" viewBox="0 0 24 24"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" /><polyline points="13 2 13 9 20 9" /></symbol>
+  </svg>
+
+  <header>
+    <nav class="nav-global" aria-label="التنقل الرئيسي">
+      <button id="brand-home" class="brand-logo" type="button" aria-label="الذهاب إلى الصفحة الرئيسية">
+        <svg class="icon" aria-hidden="true"><use href="#icon-app"></use></svg>
+        <span class="brand-logo__text">PDF Studio</span>
+      </button>
+
+      <div class="nav-actions">
+        <button id="btn-home" class="nav-btn-back" type="button" aria-label="العودة للرئيسية">
+          <svg class="icon nav-arrow-back" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+          <span>العودة للرئيسية</span>
+        </button>
+        <button id="theme-toggle" class="theme-btn" type="button" aria-label="تبديل الوضع الفاتح والداكن">
+          <svg class="icon icon-sun" aria-hidden="true"><use href="#icon-sun"></use></svg>
+          <svg class="icon icon-moon" style="display:none" aria-hidden="true"><use href="#icon-moon"></use></svg>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <main id="app-main">
+    <section id="view-hub" class="view-container view--active" aria-labelledby="hub-heading" aria-hidden="false" role="region">
+      <h1 id="hub-heading" class="view-focus-target" tabindex="-1">مركز الأدوات</h1>
+      <div class="hub-grid">
+        <div class="hub-card" data-route="imagesToPdf">
+          <div class="hub-card__icon"><svg class="icon" aria-hidden="true"><use href="#icon-images"></use></svg></div>
+          <h3 class="hub-card__title">صور إلى PDF</h3>
+          <p class="hub-card__desc">استورد مجلدات من الصور وحولها لحظياً إلى كتاب إلكتروني أو مجلد PDF عالي الدقة.</p>
+        </div>
+        <div class="hub-card" data-route="mergePdf">
+          <div class="hub-card__icon"><svg class="icon" aria-hidden="true"><use href="#icon-merge"></use></svg></div>
+          <h3 class="hub-card__title">دمـج الملفـات</h3>
+          <p class="hub-card__desc">ادمج عدة ملفات PDF في مستند واحد ورتبها بمنتهى السهولة والسلاسة.</p>
+        </div>
+        <div class="hub-card" data-route="editPdf">
+          <div class="hub-card__icon"><svg class="icon" aria-hidden="true"><use href="#icon-edit"></use></svg></div>
+          <h3 class="hub-card__title">تحرير الصفحات</h3>
+          <p class="hub-card__desc">أضف صفحات جديدة، احذف، دَوّر، ورتِّب صفحات المستند باستخدام واجهة مرئية.</p>
+        </div>
+        <div class="hub-card" data-route="watermarkPdf">
+          <div class="hub-card__icon"><svg class="icon" aria-hidden="true"><use href="#icon-watermark"></use></svg></div>
+          <h3 class="hub-card__title">إضافة علامة مائية</h3>
+          <p class="hub-card__desc">احمِ مستنداتك عبر طباعة نص شفاف كعلامة مائية فوق كافة صفحات الملف.</p>
+        </div>
+        <div class="hub-card" data-route="pageNumberPdf">
+          <div class="hub-card__icon"><svg class="icon" aria-hidden="true"><use href="#icon-numbers"></use></svg></div>
+          <h3 class="hub-card__title">ترقيم الصفحات</h3>
+          <p class="hub-card__desc">تسلسل آلي احترافي لصفحات المستند بصيغ مخصصة ليضفي طابعاً أكاديمياً ورسمياً.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-imagesToPdf" class="view-container workspace-view view--hidden" aria-labelledby="title-imagesToPdf" aria-hidden="true" role="region">
+      <div class="workspace-header">
+        <h2 id="title-imagesToPdf" class="view-focus-target" tabindex="-1">صور إلى PDF</h2>
+        <p>اسحب صورك هنا وقم بترتيبها بحرية تامة لإنتاج ملف PDF استثنائي</p>
+      </div>
+
+      <div class="glass-panel">
+        <div id="images-drop" class="drop-zone">
+          <svg class="icon drop-zone__icon" aria-hidden="true"><use href="#icon-images"></use></svg>
+          <span class="drop-zone__title">أسقط الصور هنا</span>
+          <button id="images-browse" type="button" class="btn btn--outline"><svg class="icon" aria-hidden="true"><use href="#icon-upload"></use></svg> تصفح الجهاز</button>
+        </div>
+        <input id="images-input" type="file" accept="image/*" multiple hidden />
+
+        <div class="workspace-note">
+          <div class="helper-row">
+            <span class="helper-chip helper-chip--accent">ترتيب خطي ثابت</span>
+            <span class="helper-chip">دعم PNG / JPG / WEBP</span>
+            <span class="helper-chip">استخدم السحب أو الأسهم للحركة الدقيقة</span>
+          </div>
+        </div>
+        <div id="images-caption" class="list-caption" hidden>
+          <strong>ترتيب صفحات الملف النهائي</strong>
+          <span>الترتيب الظاهر هنا هو الترتيب الذي سيُصدر داخل PDF.</span>
+        </div>
+        <div id="images-list" class="thumb-list"></div>
+        <div id="images-empty" class="list-empty" hidden>أضف صوراً لتظهر هنا ضمن قائمة ثابتة يمكن ترتيبها بدقة.</div>
+
+        <div class="action-bar">
+          <div class="input-field">
+            <label for="images-filename">اسم الملف النهائي</label>
+            <input id="images-filename" type="text" value="معرض-الصور.pdf" />
+          </div>
+          <div class="action-bar__actions">
+            <button id="images-add" type="button" class="btn btn--outline"><svg class="icon" aria-hidden="true"><use href="#icon-upload"></use></svg> إضافة صور</button>
+            <button id="images-clear" type="button" class="btn btn--outline"><svg class="icon" aria-hidden="true"><use href="#icon-trash"></use></svg> تفريغ</button>
+            <button id="images-build" type="button" class="btn btn--primary" disabled><svg class="icon" aria-hidden="true"><use href="#icon-download"></use></svg> إنشاء وتنزيل PDF</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-mergePdf" class="view-container workspace-view view--hidden" aria-labelledby="title-mergePdf" aria-hidden="true" role="region">
+      <div class="workspace-header">
+        <h2 id="title-mergePdf" class="view-focus-target" tabindex="-1">دمـج ملفات PDF</h2>
+        <p>اجمع مستنداتك ورتبها لتكون في ملف واحد متصل</p>
+      </div>
+
+      <div class="glass-panel">
+        <div id="merge-drop" class="drop-zone">
+          <svg class="icon drop-zone__icon" aria-hidden="true"><use href="#icon-merge"></use></svg>
+          <span class="drop-zone__title">أسقط الملفات هنا</span>
+          <button id="merge-browse" type="button" class="btn btn--outline"><svg class="icon" aria-hidden="true"><use href="#icon-upload"></use></svg> تصفح المستندات</button>
+        </div>
+        <input id="merge-input" type="file" accept="application/pdf,.pdf" multiple hidden />
+
+        <div id="merge-caption" class="list-caption" hidden>
+          <strong>تسلسل الدمج</strong>
+          <span>يمكنك تغيير الترتيب بالسحب أو بالتحريك خطوة بخطوة.</span>
+        </div>
+        <div id="merge-list" class="thumb-list"></div>
+        <div id="merge-empty" class="list-empty" hidden>أضف ملفات PDF ليظهر ترتيب الدمج النهائي هنا.</div>
+
+        <div class="action-bar">
+          <div class="input-field">
+            <label for="merge-filename">اسم الملف النهائي</label>
+            <input id="merge-filename" type="text" value="الملفات-المدمجة.pdf" />
+          </div>
+          <div class="action-bar__actions">
+            <button id="merge-add" type="button" class="btn btn--outline"><svg class="icon" aria-hidden="true"><use href="#icon-upload"></use></svg> إضافة ملفات</button>
+            <button id="merge-clear" type="button" class="btn btn--outline"><svg class="icon" aria-hidden="true"><use href="#icon-trash"></use></svg> تفريغ</button>
+            <button id="merge-build" type="button" class="btn btn--primary" disabled><svg class="icon" aria-hidden="true"><use href="#icon-download"></use></svg> دمج وتنزيل PDF</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-editPdf" class="view-container workspace-view view--hidden" aria-labelledby="title-editPdf" aria-hidden="true" role="region">
+      <div class="workspace-header">
+        <h2 id="title-editPdf" class="view-focus-target" tabindex="-1">التحرير المتقدم</h2>
+        <p id="edit-header-text">اختر ملفاً لتبدأ بالتعديل على صفحاته</p>
+      </div>
+
+      <div class="glass-panel">
+        <div id="edit-start">
+          <div id="edit-drop" class="drop-zone drop-zone--hero">
+            <svg class="icon drop-zone__icon drop-zone__icon--lg" aria-hidden="true"><use href="#icon-edit"></use></svg>
+            <span class="drop-zone__title drop-zone__title--lg">أسقط ملف PDF للبدء</span>
+            <button id="edit-browse" type="button" class="btn btn--primary drop-zone__cta"><svg class="icon" aria-hidden="true"><use href="#icon-upload"></use></svg> اختيار ملف</button>
+          </div>
+          <input id="edit-input" type="file" accept="application/pdf,.pdf" hidden />
+        </div>
+
+        <div id="edit-workspace" hidden>
+          <div class="workspace-toolbar">
+            <strong id="edit-basename" class="workspace-toolbar__title"></strong>
+            <div class="workspace-toolbar__actions">
+              <button id="edit-add-pdf" type="button" class="btn btn--outline btn--sm"><svg class="icon icon--sm" aria-hidden="true"><use href="#icon-file"></use></svg> دمج ملف PDF</button>
+              <button id="edit-add-img" type="button" class="btn btn--outline btn--sm"><svg class="icon icon--sm" aria-hidden="true"><use href="#icon-images"></use></svg> إدراج صورة كصفحة</button>
+              <input id="edit-add-pdf-in" type="file" accept="application/pdf,.pdf" multiple hidden />
+              <input id="edit-add-img-in" type="file" accept="image/*" multiple hidden />
+            </div>
+          </div>
+          <div id="edit-anchor-note" class="workspace-note">الإدراج التالي سيتم في نهاية المستند. اختر صفحة لتصبح نقطة إدراج مباشرة بعدها.</div>
+          <div id="edit-caption" class="list-caption" hidden>
+            <strong>ترتيب الصفحات</strong>
+            <span>يمكنك تحديد صفحة ثم إدراج محتوى بعدها مباشرة، أو إعادة الترتيب بالسحب/الأسهم.</span>
+          </div>
+          <div id="edit-list" class="thumb-list"></div>
+          <div id="edit-empty" class="list-empty" hidden>لا توجد صفحات حالياً داخل مساحة التحرير.</div>
+
+          <div class="action-bar">
+            <div class="input-field">
+              <label for="edit-filename">الاسم النهائي</label>
+              <input id="edit-filename" type="text" value="معدل.pdf" />
+            </div>
+            <div class="action-bar__actions">
+              <button id="edit-clear" type="button" class="btn btn--outline"><svg class="icon" aria-hidden="true"><use href="#icon-trash"></use></svg> إغلاق الملف</button>
+              <button id="edit-build" type="button" class="btn btn--primary" disabled><svg class="icon" aria-hidden="true"><use href="#icon-download"></use></svg> حفظ التعديلات</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-watermarkPdf" class="view-container workspace-view view--hidden" aria-labelledby="title-watermarkPdf" aria-hidden="true" role="region">
+      <div class="workspace-header">
+        <h2 id="title-watermarkPdf" class="view-focus-target" tabindex="-1">العلامة المائية</h2>
+        <p id="watermark-header-text">اطبع ختمك وحافظ على سريّة مستنداتك</p>
+      </div>
+
+      <div class="glass-panel">
+        <div id="watermark-start">
+          <div id="watermark-drop" class="drop-zone drop-zone--hero">
+            <svg class="icon drop-zone__icon drop-zone__icon--lg" aria-hidden="true"><use href="#icon-watermark"></use></svg>
+            <span class="drop-zone__title drop-zone__title--lg">اختر ملف PDF</span>
+            <button id="watermark-browse" type="button" class="btn btn--primary drop-zone__cta"><svg class="icon" aria-hidden="true"><use href="#icon-upload"></use></svg> اختيار ملف</button>
+          </div>
+          <input id="watermark-input" type="file" accept="application/pdf,.pdf" hidden />
+        </div>
+
+        <div id="watermark-workspace" hidden>
+          <div class="workspace-doc-title">
+            <strong id="watermark-basename"></strong>
+          </div>
+
+          <div class="form-grid">
+            <div class="input-field input-field--span-2">
+              <label for="watermark-text">النص</label>
+              <input id="watermark-text" type="text" value="نسخة غير مصرحة - سري" />
+            </div>
+            <div class="input-field">
+              <label for="watermark-opacity">الشفافية (0-100%)</label>
+              <input id="watermark-opacity" type="number" min="5" max="100" value="20" />
+            </div>
+            <div class="input-field">
+              <label for="watermark-size">الحجم</label>
+              <input id="watermark-size" type="number" min="24" max="220" value="84" />
+            </div>
+            <div class="input-field">
+              <label for="watermark-angle">الزاوية</label>
+              <input id="watermark-angle" type="number" min="-90" max="90" value="-35" />
+            </div>
+            <div class="input-field">
+              <label for="watermark-color">اللون</label>
+              <input id="watermark-color" type="color" value="#111111" />
+            </div>
+            <div class="input-field">
+              <label for="watermark-position">الموضع</label>
+              <select id="watermark-position">
+                <option value="center">المنتصف</option>
+                <option value="top-right">أعلى اليمين</option>
+                <option value="top-left">أعلى اليسار</option>
+                <option value="bottom-right">أسفل اليمين</option>
+                <option value="bottom-left">أسفل اليسار</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="action-bar stack--md">
+            <div class="input-field">
+              <label for="watermark-filename">اسم الملف النهائي</label>
+              <input id="watermark-filename" type="text" value="محمي.pdf" />
+            </div>
+            <div class="action-bar__actions">
+              <button id="watermark-clear" type="button" class="btn btn--outline">إلغاء</button>
+              <button id="watermark-build" type="button" class="btn btn--primary"><svg class="icon" aria-hidden="true"><use href="#icon-download"></use></svg> بصم وتنزيل</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-pageNumberPdf" class="view-container workspace-view view--hidden" aria-labelledby="title-pageNumberPdf" aria-hidden="true" role="region">
+      <div class="workspace-header">
+        <h2 id="title-pageNumberPdf" class="view-focus-target" tabindex="-1">ترقيم الصفحات</h2>
+        <p id="number-header-text">أضف ترقيماً تسلسلياً لأسفل صفحات المستند</p>
+      </div>
+
+      <div class="glass-panel">
+        <div id="number-start">
+          <div id="number-drop" class="drop-zone drop-zone--hero">
+            <svg class="icon drop-zone__icon drop-zone__icon--lg" aria-hidden="true"><use href="#icon-numbers"></use></svg>
+            <span class="drop-zone__title drop-zone__title--lg">اختر ملف PDF</span>
+            <button id="number-browse" type="button" class="btn btn--primary drop-zone__cta"><svg class="icon" aria-hidden="true"><use href="#icon-upload"></use></svg> اختيار ملف</button>
+          </div>
+          <input id="number-input" type="file" accept="application/pdf,.pdf" hidden />
+        </div>
+
+        <div id="number-workspace" hidden>
+          <div class="workspace-doc-title">
+            <strong id="number-basename"></strong>
+          </div>
+
+          <div class="workspace-note">
+            <div class="helper-row">
+              <span class="helper-chip helper-chip--accent">ترقيم نصي حقيقي</span>
+              <span class="helper-chip">قابل للبحث داخل PDF</span>
+              <span class="helper-chip">تحكم بالمكان والحجم والهوامش</span>
+            </div>
+          </div>
+          <div class="form-grid stack--md">
+            <div class="input-field">
+              <label for="number-template">نمط الترقيم</label>
+              <select id="number-template">
+                <option value="plain">{n}</option>
+                <option value="dash">- {n} -</option>
+                <option value="total">{n} / {total}</option>
+                <option value="brackets">[ {n} ]</option>
+              </select>
+            </div>
+            <div class="input-field">
+              <label for="number-startNum">البدء من رقم</label>
+              <input id="number-startNum" type="number" min="1" value="1" />
+            </div>
+            <div class="input-field">
+              <label for="number-position">الموضع</label>
+              <select id="number-position">
+                <option value="bottom-center">أسفل المنتصف</option>
+                <option value="bottom-right">أسفل اليمين</option>
+                <option value="bottom-left">أسفل اليسار</option>
+                <option value="top-center">أعلى المنتصف</option>
+                <option value="top-right">أعلى اليمين</option>
+                <option value="top-left">أعلى اليسار</option>
+                <option value="bottom-outer">هامش خارجي متناوب</option>
+              </select>
+            </div>
+            <div class="input-field">
+              <label for="number-size">الحجم</label>
+              <input id="number-size" type="number" min="10" max="64" value="18" />
+            </div>
+            <div class="input-field">
+              <label for="number-margin">الهامش</label>
+              <input id="number-margin" type="number" min="12" max="120" value="36" />
+            </div>
+            <div class="input-field">
+              <label for="number-color">اللون</label>
+              <input id="number-color" type="color" value="#111111" />
+            </div>
+          </div>
+          <label class="control-check control-check--block" for="number-skipFirst">
+            <input id="number-skipFirst" type="checkbox" />
+            <span>تجاوز الصفحة الأولى</span>
+          </label>
+
+          <div class="action-bar stack--md">
+            <div class="input-field">
+              <label for="number-filename">اسم الملف النهائي</label>
+              <input id="number-filename" type="text" value="مرقم.pdf" />
+            </div>
+            <div class="action-bar__actions">
+              <button id="number-clear" type="button" class="btn btn--outline">إلغاء</button>
+              <button id="number-build" type="button" class="btn btn--primary"><svg class="icon" aria-hidden="true"><use href="#icon-download"></use></svg> ترقيم وتنزيل</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="loader-overlay" id="loading-overlay" role="dialog" aria-modal="true" aria-labelledby="loading-title" aria-describedby="loading-desc" aria-hidden="true" aria-busy="false">
+    <div class="spider-spinner" aria-hidden="true"></div>
+    <h2 class="loader-overlay__title" id="loading-title">جارِ المعالجة</h2>
+    <p class="loader-overlay__desc" id="loading-desc">يرجى الانتظار بينما نقوم بالسحر...</p>
+  </div>
+
+  <div id="toast-container" class="toast-container" aria-live="polite" aria-relevant="additions text"></div>
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"
+    integrity="sha384-weMABwrltA6jWR8DDe9Jp5blk+tZQh7ugpCsF3JwSA53WZM9/14PjS5LAJNHNjAI"
+    crossorigin="anonymous"
+  ></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.7/Sortable.min.js"
+    integrity="sha384-DgmC6Xe2bSN2WjTDXzWYbUbxyhNP+NNkGDR/g78pCXV7E7rcVTGxVg0uIVCUUcBc"
+    crossorigin="anonymous"
+  ></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/legacy/build/pdf.js"
+    integrity="sha384-X0GtPelCNVyzIhs+Ywksen47ZMkfWLC3dD7KoxS2znZQJyGiVhTuXUtRzTWT596q"
+    crossorigin="anonymous"
+  ></script>
+  <script type="module" src="assets/js/main.js"></script>
+</body>
+</html>
