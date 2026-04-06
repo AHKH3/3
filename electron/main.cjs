@@ -1,5 +1,5 @@
 "use strict";
-const { app, BrowserWindow, shell } = require("electron");
+const { app, BrowserWindow, shell, nativeImage } = require("electron");
 const path = require("path");
 const http = require("http");
 const fs = require("fs");
@@ -81,7 +81,7 @@ async function createWindow() {
   const port = await ensureServerPort();
   const startUrl = `http://127.0.0.1:${port}/index.html`;
 
-  const iconPath = path.join(ROOT, "assets", "branding", "app-icon-1024.png");
+  const iconPath = path.join(ROOT, "assets", "branding", "app-icon-512.png");
   const winOpts = {
     width: 1240,
     height: 820,
@@ -95,7 +95,10 @@ async function createWindow() {
       sandbox: true
     }
   };
-  if (fs.existsSync(iconPath)) winOpts.icon = iconPath;
+  if (fs.existsSync(iconPath)) {
+    const icon = nativeImage.createFromPath(iconPath);
+    if (!icon.isEmpty()) winOpts.icon = icon;
+  }
 
   mainWindow = new BrowserWindow(winOpts);
 

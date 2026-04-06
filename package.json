@@ -38,7 +38,7 @@
     "directories": {
       "output": "release"
     },
-    "icon": "assets/branding/app-icon-1024.png",
+    "icon": "assets/branding/app-icon-512.png",
     "win": {
       "target": ["nsis", "portable"]
     },
