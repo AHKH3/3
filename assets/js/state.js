@@ -26,7 +26,8 @@ export const state = {
     selectedId: null
   },
   watermarkPdf: { baseDoc: null },
-  pageNumberPdf: { baseDoc: null }
+  pageNumberPdf: { baseDoc: null },
+  pdfToImages: { docs: new Map(), items: [], baseDoc: null }
 };
 
 export function uid() {

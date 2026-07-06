@@ -42,6 +42,17 @@ export function thumbEditActionsHtml(id) {
       </div>`;
 }
 
+/** @param {string} id */
+export function thumbPdfToImagesActionsHtml(id) {
+  const eid = escapeHtml(id);
+  return `
+      <div class="move-group">
+        <button type="button" class="icon-btn icon-btn--accent" data-action="download" data-id="${eid}" aria-label="تحميل الصفحة">
+          <svg class="icon"><use href="#icon-download"></use></svg>
+        </button>
+      </div>`;
+}
+
 /**
  * @param {object} p
  * @param {string} p.id

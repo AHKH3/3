@@ -37,6 +37,7 @@
     <symbol id="icon-grip" viewBox="0 0 24 24"><circle cx="9" cy="5" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="5" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="15" cy="19" r="1.5"/></symbol>
     <symbol id="icon-rotate" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10" /><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" /></symbol>
     <symbol id="icon-file" viewBox="0 0 24 24"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" /><polyline points="13 2 13 9 20 9" /></symbol>
+    <symbol id="icon-pdf-to-images" viewBox="0 0 24 24"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" /><polyline points="13 2 13 9 20 9" /><rect x="8" y="13" width="8" height="6" rx="1" /><circle cx="10.5" cy="15.5" r="1" /><polyline points="16 18 14 16 11.5 18.5" /></symbol>
   </svg>
 
   <header>
@@ -87,6 +88,11 @@
           <div class="hub-card__icon"><svg class="icon" aria-hidden="true"><use href="#icon-numbers"></use></svg></div>
           <h3 class="hub-card__title">ترقيم الصفحات</h3>
           <p class="hub-card__desc">تسلسل آلي احترافي لصفحات المستند بصيغ مخصصة ليضفي طابعاً أكاديمياً ورسمياً.</p>
+        </div>
+        <div class="hub-card" data-route="pdfToImages">
+          <div class="hub-card__icon"><svg class="icon" aria-hidden="true"><use href="#icon-pdf-to-images"></use></svg></div>
+          <h3 class="hub-card__title">PDF إلى صور</h3>
+          <p class="hub-card__desc">حوّل صفحات ملف PDF إلى صور عالية الدقة بصيغة PNG أو JPG بضغطة واحدة.</p>
         </div>
       </div>
     </section>
@@ -364,6 +370,69 @@
             <div class="action-bar__actions">
               <button id="number-clear" type="button" class="btn btn--outline">إلغاء</button>
               <button id="number-build" type="button" class="btn btn--primary"><svg class="icon" aria-hidden="true"><use href="#icon-download"></use></svg> ترقيم وتنزيل</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-pdfToImages" class="view-container workspace-view view--hidden" aria-labelledby="title-pdfToImages" aria-hidden="true" role="region">
+      <div class="workspace-header">
+        <h2 id="title-pdfToImages" class="view-focus-target" tabindex="-1">PDF إلى صور</h2>
+        <p id="pdfToImages-header-text">حوّل صفحات ملف PDF إلى صور منفصلة عالية الدقة</p>
+      </div>
+
+      <div class="glass-panel">
+        <div id="pdfToImages-start">
+          <div id="pdfToImages-drop" class="drop-zone drop-zone--hero">
+            <svg class="icon drop-zone__icon drop-zone__icon--lg" aria-hidden="true"><use href="#icon-pdf-to-images"></use></svg>
+            <span class="drop-zone__title drop-zone__title--lg">اختر ملف PDF</span>
+            <button id="pdfToImages-browse" type="button" class="btn btn--primary drop-zone__cta"><svg class="icon" aria-hidden="true"><use href="#icon-upload"></use></svg> اختيار ملف</button>
+          </div>
+          <input id="pdfToImages-input" type="file" accept="application/pdf,.pdf" hidden />
+        </div>
+
+        <div id="pdfToImages-workspace" hidden>
+          <div class="workspace-doc-title">
+            <strong id="pdfToImages-basename"></strong>
+          </div>
+
+          <div class="workspace-note">
+            <div class="helper-row">
+              <span class="helper-chip helper-chip--accent">جودة عالية</span>
+              <span class="helper-chip">PNG / JPG</span>
+              <span class="helper-chip">تنزيل فردي أو جماعي</span>
+            </div>
+          </div>
+          <div class="form-grid stack--md">
+            <div class="input-field">
+              <label for="pdfToImages-format">الصيغة</label>
+              <select id="pdfToImages-format">
+                <option value="png">PNG</option>
+                <option value="jpeg">JPG</option>
+              </select>
+            </div>
+            <div class="input-field">
+              <label for="pdfToImages-scale">دقة العرض (مضاعف)</label>
+              <input id="pdfToImages-scale" type="number" min="1" max="4" step="0.5" value="2" />
+            </div>
+          </div>
+
+          <div id="pdfToImages-caption" class="list-caption" hidden>
+            <strong>معاينة الصفحات</strong>
+            <span>انقر على التحميل بجانب أي صفحة لتنزيلها، أو حمّل الكل دفعة واحدة.</span>
+          </div>
+          <div id="pdfToImages-list" class="thumb-list"></div>
+          <div id="pdfToImages-empty" class="list-empty" hidden>لا توجد صفحات للعرض.</div>
+
+          <div class="action-bar stack--md">
+            <div class="input-field">
+              <label for="pdfToImages-prefix">بادئة اسم الملف</label>
+              <input id="pdfToImages-prefix" type="text" value="صفحة" />
+            </div>
+            <div class="action-bar__actions">
+              <button id="pdfToImages-clear" type="button" class="btn btn--outline">إلغاء</button>
+              <button id="pdfToImages-build" type="button" class="btn btn--primary"><svg class="icon" aria-hidden="true"><use href="#icon-download"></use></svg> تحويل وتنزيل الكل</button>
             </div>
           </div>
         </div>

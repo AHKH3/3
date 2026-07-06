@@ -22,6 +22,7 @@ import {
   renderMetaPills,
   thumbReorderActionsHtml,
   thumbEditActionsHtml,
+  thumbPdfToImagesActionsHtml,
   buildThumbCard
 } from "./thumb-list.js";
 
@@ -242,6 +243,7 @@ export function initDropZones() {
   bindDrop("edit-drop", "edit-input", "edit-browse", handleEditBase, "pdf");
   bindDrop("watermark-drop", "watermark-input", "watermark-browse", handleWatermarkBase, "pdf");
   bindDrop("number-drop", "number-input", "number-browse", handleNumberBase, "pdf");
+  bindDrop("pdfToImages-drop", "pdfToImages-input", "pdfToImages-browse", handlePdfToImagesBase, "pdf");
 }
 
 function bindListActions(containerId, handler, selectable = false) {
@@ -284,16 +286,19 @@ export function initActionHandlers() {
   el("edit-clear").addEventListener("click", () => clearEditState());
   el("watermark-clear").addEventListener("click", clearWatermarkState);
   el("number-clear").addEventListener("click", clearNumberState);
+  el("pdfToImages-clear").addEventListener("click", clearPdfToImagesState);
 
   el("images-build").addEventListener("click", buildImagesPdf);
   el("merge-build").addEventListener("click", buildMergedPdf);
   el("edit-build").addEventListener("click", buildEditedPdf);
   el("watermark-build").addEventListener("click", buildWatermarkPdf);
   el("number-build").addEventListener("click", buildNumberedPdf);
+  el("pdfToImages-build").addEventListener("click", buildPdfToImages);
 
   bindListActions("images-list", handleImagesAction);
   bindListActions("merge-list", handleMergeAction);
   bindListActions("edit-list", handleEditAction, true);
+  bindListActions("pdfToImages-list", handlePdfToImagesAction);
 }
 
 function renderImages() {
@@ -917,10 +922,155 @@ async function buildNumberedPdf() {
   }
 }
 
+async function renderPdfPageToBlob(page, scale = 2, format = "png") {
+  const viewport = page.getViewport({ scale });
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.ceil(viewport.width);
+  canvas.height = Math.ceil(viewport.height);
+  const ctx = canvas.getContext("2d");
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  await page.render({ canvasContext: ctx, viewport }).promise;
+  const mime = format === "jpeg" ? "image/jpeg" : "image/png";
+  const quality = format === "jpeg" ? 0.92 : undefined;
+  const blob = await new Promise((resolve) => canvas.toBlob(resolve, mime, quality));
+  return blob;
+}
+
+function renderPdfToImages() {
+  const mode = state.pdfToImages;
+  const list = el("pdfToImages-list");
+  const hasItems = mode.items.length > 0;
+
+  el("pdfToImages-build").disabled = !hasItems;
+  el("pdfToImages-caption").hidden = !hasItems;
+  el("pdfToImages-empty").hidden = hasItems;
+
+  list.innerHTML = mode.items
+    .map((item, index) => {
+      const doc = mode.docs.get(item.docId);
+      return buildThumbCard({
+        id: item.id,
+        index,
+        title: `صفحة ${item.sourcePage}`,
+        metaHtml: renderMetaPills([doc.name, `الصفحة ${item.sourcePage}`]),
+        thumbInnerHtml: `<img src="${item.url}" alt="صفحة ${item.sourcePage}" />`,
+        actionsHtml: thumbPdfToImagesActionsHtml(item.id)
+      });
+    })
+    .join("");
+}
+
+function handlePdfToImagesAction(action, itemId) {
+  if (action === "download") {
+    const item = state.pdfToImages.items.find((entry) => entry.id === itemId);
+    if (item) downloadSinglePage(item);
+  }
+}
+
+async function downloadSinglePage(item) {
+  const format = el("pdfToImages-format").value || "png";
+  const scale = safeNumber(el("pdfToImages-scale").value, 2, 1, 4);
+  const prefix = el("pdfToImages-prefix").value.trim() || "صفحة";
+  try {
+    setBusy(true, "تحويل الصفحة", "جاري إنشاء الصورة...");
+    const docDef = state.pdfToImages.docs.get(item.docId);
+    const pdf = await pdfjsLib.getDocument({ data: docDef.bytes.slice() }).promise;
+    const page = await pdf.getPage(item.sourcePage);
+    const blob = await renderPdfPageToBlob(page, scale, format);
+    const ext = format === "jpeg" ? "jpg" : "png";
+    const bytes = new Uint8Array(await blob.arrayBuffer());
+    downloadBlob(bytes, `${prefix}-${item.sourcePage}.${ext}`, format === "jpeg" ? "image/jpeg" : "image/png");
+    showToast(`تم تنزيل صفحة ${item.sourcePage}`);
+  } catch (error) {
+    console.error(error);
+    showToast("فشل تحويل الصفحة", "error");
+  } finally {
+    setBusy(false);
+  }
+}
+
+async function handlePdfToImagesBase(files) {
+  if (!files.length) return;
+  clearPdfToImagesState();
+  setBusy(true, "تحليل المستند", "نولد معاينات لصفحات الملف...");
+  try {
+    const file = files[0];
+    const bytes = await readBytes(file);
+    const docId = uid();
+    state.pdfToImages.docs.set(docId, { name: file.name, bytes, size: file.size });
+    state.pdfToImages.baseDoc = { id: docId, name: file.name };
+    const pdf = await pdfjsLib.getDocument({ data: bytes.slice() }).promise;
+    const items = [];
+    for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
+      const page = await pdf.getPage(pageNumber);
+      const url = await renderPdfPageThumb(page, 0.42);
+      items.push({
+        id: uid(),
+        docId,
+        pageIndex: pageNumber - 1,
+        sourcePage: pageNumber,
+        url
+      });
+    }
+    state.pdfToImages.items = items;
+    el("pdfToImages-basename").textContent = `${file.name} · ${pdf.numPages} صفحات`;
+    el("pdfToImages-start").hidden = true;
+    el("pdfToImages-workspace").hidden = false;
+    renderPdfToImages();
+  } catch (error) {
+    console.error(error);
+    showToast("تعذر فتح ملف PDF", "error");
+  } finally {
+    setBusy(false);
+  }
+}
+
+async function buildPdfToImages() {
+  if (!state.pdfToImages.items.length || !state.pdfToImages.baseDoc) return;
+  const format = el("pdfToImages-format").value || "png";
+  const scale = safeNumber(el("pdfToImages-scale").value, 2, 1, 4);
+  const prefix = el("pdfToImages-prefix").value.trim() || "صفحة";
+  setBusy(true, "تحويل الصفحات", "نولد الصور بجودة عالية ونبدأ التنزيل...");
+  try {
+    const docDef = state.pdfToImages.docs.get(state.pdfToImages.baseDoc.id);
+    const pdf = await pdfjsLib.getDocument({ data: docDef.bytes.slice() }).promise;
+    for (let i = 0; i < state.pdfToImages.items.length; i++) {
+      const item = state.pdfToImages.items[i];
+      const page = await pdf.getPage(item.sourcePage);
+      const blob = await renderPdfPageToBlob(page, scale, format);
+      const ext = format === "jpeg" ? "jpg" : "png";
+      const bytes = new Uint8Array(await blob.arrayBuffer());
+      downloadBlob(bytes, `${prefix}-${item.sourcePage}.${ext}`, format === "jpeg" ? "image/jpeg" : "image/png");
+      if (i < state.pdfToImages.items.length - 1) {
+        await new Promise((resolve) => setTimeout(resolve, 400));
+      }
+    }
+    showToast("تم تحويل وتنزيل الصور.");
+  } catch (error) {
+    console.error(error);
+    showToast("فشل تحويل الصفحات", "error");
+  } finally {
+    setBusy(false);
+  }
+}
+
+export function clearPdfToImagesState(render = true) {
+  state.pdfToImages.items.forEach((item) => revokePreview(item.url));
+  state.pdfToImages.items = [];
+  state.pdfToImages.docs.clear();
+  state.pdfToImages.baseDoc = null;
+  el("pdfToImages-start").hidden = false;
+  el("pdfToImages-workspace").hidden = true;
+  el("pdfToImages-basename").textContent = "";
+  if (render) renderPdfToImages();
+}
+
 export function clearForActiveTool() {
   if (state.activeView === "imagesToPdf") clearImagesState();
   if (state.activeView === "mergePdf") clearMergeState();
   if (state.activeView === "editPdf") clearEditState();
   if (state.activeView === "watermarkPdf") clearWatermarkState();
   if (state.activeView === "pageNumberPdf") clearNumberState();
+  if (state.activeView === "pdfToImages") clearPdfToImagesState();
 }

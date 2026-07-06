@@ -42,8 +42,8 @@ export function revokePreview(url) {
   if (typeof url === "string" && url.startsWith("blob:")) URL.revokeObjectURL(url);
 }
 
-export function downloadBlob(bytes, filename) {
-  const blob = new Blob([bytes], { type: "application/pdf" });
+export function downloadBlob(bytes, filename, mimeType = "application/pdf") {
+  const blob = new Blob([bytes], { type: mimeType });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
